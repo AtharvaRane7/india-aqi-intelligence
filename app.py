@@ -896,22 +896,27 @@ with tab5:
     city_map["Category"] = city_map["AQI"].apply(aqi_category)
     city_map["Size"] = city_map["AQI"] / 3
 
-    fig = px.scatter_geo(
-        city_map, lat="Latitude", lon="Longitude",
-        color="AQI", size="Size", size_max=40,
-        hover_name="City",
-        hover_data={"State":True,"AQI":True,"Category":True,
-                    "Latitude":False,"Longitude":False,"Size":False},
-        color_continuous_scale=["#00C853","#FFD600","#FF6D00","#DD2C00","#6D0000"],
-        range_color=[40, 280],
-        scope="asia",
-        projection_type="natural earth",
-    )
+    fig = go.Figure()
+    fig.add_trace(go.Scattergeo(
+        lat=city_map["Latitude"],
+        lon=city_map["Longitude"],
+        text=city_map.apply(lambda r: f"{r.City}<br>AQI: {r.AQI}<br>{r.Category}<br>{r.State}", axis=1),
+        hoverinfo="text",
+        mode="markers",
+        marker=dict(
+            size=city_map["AQI"] / 6,
+            sizemin=8,
+            color=city_map["AQI"],
+            colorscale=[[0,"#00C853"],[0.3,"#FFD600"],[0.6,"#FF6D00"],[0.85,"#DD2C00"],[1,"#6D0000"]],
+            cmin=40, cmax=280,
+            colorbar=dict(title="AQI", tickfont=dict(color="#78909c"), titlefont=dict(color="#78909c")),
+            line=dict(width=0),
+            opacity=0.85,
+        )
+    ))
     fig.update_geos(
-        visible=True,
-        resolution=50,
+        scope="asia",
         showcountries=True, countrycolor="#1e2d3d",
-        showsubunits=True, subunitcolor="#1e2d3d",
         showland=True, landcolor="#0a0f1a",
         showocean=True, oceancolor="#060912",
         showlakes=True, lakecolor="#060912",
@@ -923,13 +928,7 @@ with tab5:
     fig.update_layout(
         height=520,
         paper_bgcolor="#060912",
-        geo_bgcolor="#060912",
         margin=dict(l=0,r=0,t=0,b=0),
-        coloraxis_colorbar=dict(
-            title="AQI",
-            tickfont=dict(color="#78909c"),
-            titlefont=dict(color="#78909c"),
-        )
     )
     st.plotly_chart(fig, use_container_width=True)
 
