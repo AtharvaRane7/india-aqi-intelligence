@@ -896,7 +896,7 @@ with tab5:
     city_map["Category"] = city_map["AQI"].apply(aqi_category)
     city_map["Size"] = city_map["AQI"] / 3
 
-    fig = px.scatter_mapbox(
+    fig = px.scatter_geo(
         city_map, lat="Latitude", lon="Longitude",
         color="AQI", size="Size", size_max=40,
         hover_name="City",
@@ -904,13 +904,26 @@ with tab5:
                     "Latitude":False,"Longitude":False,"Size":False},
         color_continuous_scale=["#00C853","#FFD600","#FF6D00","#DD2C00","#6D0000"],
         range_color=[40, 280],
-        mapbox_style="carto-darkmatter",
-        zoom=4.2,
-        center={"lat":22.5,"lon":80.0},
+        scope="asia",
+        projection_type="natural earth",
+    )
+    fig.update_geos(
+        visible=True,
+        resolution=50,
+        showcountries=True, countrycolor="#1e2d3d",
+        showsubunits=True, subunitcolor="#1e2d3d",
+        showland=True, landcolor="#0a0f1a",
+        showocean=True, oceancolor="#060912",
+        showlakes=True, lakecolor="#060912",
+        lataxis_range=[5, 38],
+        lonaxis_range=[65, 100],
+        bgcolor="#060912",
+        framecolor="#1e2d3d",
     )
     fig.update_layout(
         height=520,
         paper_bgcolor="#060912",
+        geo_bgcolor="#060912",
         margin=dict(l=0,r=0,t=0,b=0),
         coloraxis_colorbar=dict(
             title="AQI",
