@@ -900,18 +900,25 @@ with tab5:
     fig.add_trace(go.Scattergeo(
         lat=city_map["Latitude"],
         lon=city_map["Longitude"],
-        text=city_map.apply(lambda r: f"{r.City}<br>AQI: {r.AQI}<br>{r.Category}<br>{r.State}", axis=1),
+        text=city_map.apply(
+            lambda r: f"{r.City}<br>AQI: {r.AQI}<br>{r.Category}<br>{r.State}", axis=1),
         hoverinfo="text",
         mode="markers",
         marker=dict(
-            size=city_map["AQI"] / 6,
-            sizemin=8,
-            color=city_map["AQI"],
-            colorscale=[[0,"#00C853"],[0.3,"#FFD600"],[0.6,"#FF6D00"],[0.85,"#DD2C00"],[1,"#6D0000"]],
-            cmin=40, cmax=280,
-            colorbar=dict(title="AQI", tickfont=dict(color="#78909c"), titlefont=dict(color="#78909c")),
-            line=dict(width=0),
+            size=(city_map["AQI"] / 6).clip(lower=8).tolist(),
+            color=city_map["AQI"].tolist(),
+            colorscale=[
+                [0.0, "#00C853"],
+                [0.3, "#FFD600"],
+                [0.6, "#FF6D00"],
+                [0.85,"#DD2C00"],
+                [1.0, "#6D0000"],
+            ],
+            cmin=40,
+            cmax=280,
+            showscale=True,
             opacity=0.85,
+            line_width=0,
         )
     ))
     fig.update_geos(
@@ -928,7 +935,7 @@ with tab5:
     fig.update_layout(
         height=520,
         paper_bgcolor="#060912",
-        margin=dict(l=0,r=0,t=0,b=0),
+        margin=dict(l=0, r=0, t=0, b=0),
     )
     st.plotly_chart(fig, use_container_width=True)
 
